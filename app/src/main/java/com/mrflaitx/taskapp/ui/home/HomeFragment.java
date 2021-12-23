@@ -1,6 +1,9 @@
 package com.mrflaitx.taskapp.ui.home;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,14 +19,19 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.mrflaitx.taskapp.App;
 import com.mrflaitx.taskapp.R;
 import com.mrflaitx.taskapp.databinding.FragmentHomeBinding;
+import com.mrflaitx.taskapp.models.User;
 
-public class HomeFragment extends Fragment {
+import java.util.ArrayList;
+import java.util.List;
+
+public class HomeFragment extends Fragment implements TaskAdapter.OnItemClick {
 
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
-    private TaskAdapter adapter;
+    private final TaskAdapter adapter = new TaskAdapter();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -32,7 +40,6 @@ public class HomeFragment extends Fragment {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        adapter = new TaskAdapter();
         return root;
     }
 
@@ -41,19 +48,36 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         initListeners();
         setFragmentListener();
+
+        App.database.userDao().getAllUsers().observe(getViewLifecycleOwner(),new Observer<List<User>>() {
+            @Override
+            public void onChanged(List<User> users) {
+                adapter.setList(users);
+                Log.e("TAG", "Live data worker: ");
+            }
+        });
+
         initRv();
     }
 
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        adapter.setList(App.database.userDao().getAllUsersList());
+//    }
+
     private void initRv() {
+        adapter.setListener(this);
         binding.taskRv.setAdapter(adapter);
     }
+
 
     private void setFragmentListener() {
         getParentFragmentManager().setFragmentResultListener("key", getViewLifecycleOwner(), new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                String text = result.getString("text");
-                adapter.setText(text);
+                User user = (User) result.getSerializable("user");
+                App.database.userDao().addUser(user);
             }
         });
     }
@@ -73,5 +97,27 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onClick(String txt) {
+        Toast.makeText(requireContext(),txt,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onLongClick(int position) {
+        Log.e("TAG", "position: "+ position );
+        new AlertDialog.Builder(requireContext())
+                .setMessage("Внимание")
+                .setIcon(R.drawable.ic_launcher_foreground)
+                .setTitle("Удалить запись ?")
+                .setNegativeButton("Нет", null)
+                .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        adapter.removeItem(position);
+                        binding.taskRv.setAdapter(adapter);
+                    }
+                }).show();
     }
 }

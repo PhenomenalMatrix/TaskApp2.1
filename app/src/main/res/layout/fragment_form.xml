@@ -8,26 +8,45 @@
     android:padding="20dp"
     >
 
-    <EditText
-        android:id="@+id/taskEt"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputLayoutName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:hint="@string/enter_your_text"
-        android:textAlignment="center"
-        android:textAllCaps="true"
-        />
+        android:hint="Enter your name"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/nameEt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputLayoutSurname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/inputLayoutName"
+        android:hint="Enter your surname"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/surnameEt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <Button
         android:id="@+id/saveBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/taskEt"
+        app:layout_constraintTop_toBottomOf="@id/inputLayoutSurname"
         android:layout_marginTop="5dp"
         android:text="save"
+        android:background="@drawable/bg_button"
+        android:textColor="@color/white"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
