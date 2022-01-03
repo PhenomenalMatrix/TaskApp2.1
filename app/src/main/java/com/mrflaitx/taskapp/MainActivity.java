@@ -14,6 +14,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.mrflaitx.taskapp.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
@@ -49,11 +50,13 @@ public class MainActivity extends AppCompatActivity {
                 navController,
                 appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
-
-
         if (!App.prefs.isBoardShown()){
             navController.navigate(R.id.boardFragment);
             App.prefs.saveBordState();
+        }
+        // проверка на вход (заходил ли пользователь)
+        if (FirebaseAuth.getInstance().getCurrentUser() == null){
+            navController.navigate(R.id.authFragment);
         }
 
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {

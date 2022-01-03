@@ -18,7 +18,10 @@ public class App extends Application {
         database = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class,
                 "dataBase")
+                // Разршение на запросы в главном потоке
                 .allowMainThreadQueries()
+                // Игнор. миграции
+                .fallbackToDestructiveMigration()
                 .build();
         prefs = new Prefs(this);
     }

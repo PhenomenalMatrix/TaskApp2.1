@@ -48,7 +48,6 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnItemClick {
         super.onViewCreated(view, savedInstanceState);
         initListeners();
         setFragmentListener();
-
         App.database.userDao().getAllUsers().observe(getViewLifecycleOwner(),new Observer<List<User>>() {
             @Override
             public void onChanged(List<User> users) {
@@ -59,12 +58,6 @@ public class HomeFragment extends Fragment implements TaskAdapter.OnItemClick {
 
         initRv();
     }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        adapter.setList(App.database.userDao().getAllUsersList());
-//    }
 
     private void initRv() {
         adapter.setListener(this);
